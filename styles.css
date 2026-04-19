@@ -29,6 +29,48 @@ body {
   z-index: 1000;
 }
 
+/* Botón hamburguesa */
+.menu-toggle {
+  display: none;
+  font-size: 30px;
+  cursor: pointer;
+}
+
+/* Menú normal (PC) */
+.menu {
+  display: flex;
+  gap: 20px;
+}
+
+/* 📱 Móvil */
+@media (max-width: 768px) {
+
+  .menu-toggle {
+    display: block;
+  }
+
+  .menu {
+    position: absolute;
+    top: 80px;
+    left: 0;
+    width: 100%;
+    background: white;
+    flex-direction: column;
+    align-items: center;
+    display: none;
+  }
+
+  .menu a {
+    width: 100%;
+    padding: 15px;
+    text-align: center;
+    border-top: 1px solid #eee;
+  }
+
+  .menu.active {
+    display: flex;
+  }
+}
 
 
 .logo {
