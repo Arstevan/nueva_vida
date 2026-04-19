@@ -37,7 +37,19 @@
   </nav>
 </header>
 
+<main>
+  <h1>Bienvenido a Nueva Vida</h1>
+</main>
 
+<!-- 🔥 SCRIPT (siempre al final) -->
+<script>
+  const toggle = document.getElementById('menu-toggle');
+  const menu = document.getElementById('menu');
+
+  toggle.addEventListener('click', () => {
+    menu.classList.toggle('active');
+  });
+</script>
 
 <section id="inicio" class="banner">
   <img src="Imagenes/PORTADA_NV.jpg" alt="Iglesia Nueva Vida">
