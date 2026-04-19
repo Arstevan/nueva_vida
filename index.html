@@ -14,13 +14,12 @@
 
 <body>
 
-  
 <header class="header">
   <div class="logo">
-    <img src="Imagenes/logo NV negro.png" alt="Nueva Vida">
+    <img src="/Imagenes/logo NV negro.png" alt="Nueva Vida">
   </div>
 
-   
+  <!-- 🔥 BOTÓN HAMBURGUESA -->
   <div class="menu-toggle" id="menu-toggle">
     ☰
   </div>
@@ -37,29 +36,18 @@
   </nav>
 </header>
 
-<main>
-  <h1>Bienvenido a Nueva Vida</h1>
-</main>
 
-<!-- 🔥 SCRIPT (siempre al final) -->
-<script>
-  const toggle = document.getElementById('menu-toggle');
-  const menu = document.getElementById('menu');
-
-  toggle.addEventListener('click', () => {
-    menu.classList.toggle('active');
-  });
-</script>
 
 <section id="inicio" class="banner">
-  <img src="Imagenes/PORTADA_NV.jpg" alt="Iglesia Nueva Vida">
+  <img src="/Imagenes/PORTADA_NV.jpg" alt="Iglesia Nueva Vida">
 </section>
 
 
 <section id="nosotros" class="nosotros">
+  
   <div class="nosotros-container">
     <div class="nosotros-logo">
-      <img src="Imagenes/logo NV negro.png" alt="Logo Nueva Vida">
+      <img src="/Imagenes/logo NV negro.png" alt="Logo Nueva Vida">
     </div>
 
     <div class="nosotros-texto">
@@ -78,7 +66,40 @@ hermanos en la fe, los cuales tomaron la decisión de constituirse bajo el nombr
   </div>
 </section>
 
+</section>
 
+<section id="servicios" class="servicios">
+  <h2>Nuestros Servicios</h2>
+
+  <div class="contenedor-servicios">
+
+    <div class="servicio">
+      <img src="/servicios.png" alt="Servicio Dominical">
+      <h3>Oracion y Ayunos</h3>
+      <p>Miércoles - 9:30 AM</p>
+    </div>
+
+    <div class="servicio">
+      <img src="/servicios.png" alt="Oración">
+     <h3>Comunion y Palabra</h3>
+      <p> Viernes - 7:00 PM</p>
+    </div>
+
+    <div class="servicio">
+      <img src="/Imagenes/jovenes .jpeg" alt="Estudio Bíblico">
+     <h3>Servicio de Jóvenes</h3>
+      <p>Sábado - 5:00 PM</p>
+    </div>
+
+    <div class="servicio">
+      <img src="/servicios.png" alt="Jóvenes">
+      <h3>Escuela  Dominical</h3>
+      <p>Domingo - 10:00 AM</p>
+    </div>
+
+  </div>
+</section>
+ 
 
 <section id="ministerios" class="ministerios">
   <h2>Nuestros Ministerios</h2>
@@ -87,7 +108,7 @@ hermanos en la fe, los cuales tomaron la decisión de constituirse bajo el nombr
     
     <div class="ministerio">
       <div class="ministerio-imagen">
-        <img src="Imagenes/Pastores.png" alt="Pastores">
+        <img src="/Imagenes/Pastores.png" alt="Pastores">
       </div>
       <h3>Pastores</h3>
       <p class="pastores-nombres">Pr John Garcia y Shirley Hernandez</p>
@@ -96,7 +117,7 @@ hermanos en la fe, los cuales tomaron la decisión de constituirse bajo el nombr
 
     <div class="ministerio">
       <div class="ministerio-imagen">
-        <img src="Imagenes/muejeres_consagradas.jpeg" alt="Consagradas">
+        <img src="/Imagenes/muejeres_consagradas.jpeg" alt="Consagradas">
       </div>
       <h3>Consagradas</h3>
       <p class="pastores-nombres">Ministerio de Mujeres</p>
@@ -105,16 +126,16 @@ hermanos en la fe, los cuales tomaron la decisión de constituirse bajo el nombr
 
     <div class="ministerio">
       <div class="ministerio-imagen">
-        <img src="Imagenes/jovenes .jpeg" alt="Escogidos">
+        <img src="/Imagenes/fabi pas_n.jpg" alt="Escogidos">
       </div>
       <h3>Escogidos</h3>
       <p class="pastores-nombres">Pr de Jóvenes Fabian De La Hoz</p>
-      <p class="resena">Energía y propósito unidos para impactar a la nueva generación, enseñándoles a vivir una fe auténtica en el mundo actual.</p>
+      <p class="resena">Somos un grupo de jóvenes que sirven a Dios, dispuestos a ser ejemplo de amor y fe como forma de impacto a otros jóvenes.</p>
     </div>
 
     <div class="ministerio">
       <div class="ministerio-imagen">
-        <img src="Imagenes/pas_oscar_erica.jpeg" alt="Conexión">
+        <img src="/Imagenes/pas_oscar_erica.jpeg" alt="Conexión">
       </div>
       <h3>Conexión</h3>
       <p class="pastores-nombres">Pr Oscar Maldonado y Erika Barbosa</p>
@@ -124,7 +145,7 @@ hermanos en la fe, los cuales tomaron la decisión de constituirse bajo el nombr
 
     <div class="ministerio">
       <div class="ministerio-imagen">
-        <img src="Imagenes/staff.jpg" alt="Staff">
+        <img src="/Imagenes/staff.jpg" alt="Staff">
       </div>
       <h3>Staff</h3>
       <p class="resena">El corazón del servicio. Hombres y mujeres comprometidos
@@ -133,7 +154,7 @@ hermanos en la fe, los cuales tomaron la decisión de constituirse bajo el nombr
 
     <div class="ministerio">
       <div class="ministerio-imagen">
-        <img src="Imagenes/nueva vida kids.png" alt="Kids">
+        <img src="/Imagenes/nueva vida kids.png" alt="Kids">
       </div>
       <h3>Nueva Vida Kids</h3>
       <p class="pastores-nombres">Lider. Yajaira De La Hoz</p>
@@ -153,7 +174,7 @@ hermanos en la fe, los cuales tomaron la decisión de constituirse bajo el nombr
     
     <div class="ministerio">
       <div class="ministerio-imagen">
-        <img src="Imagenes/danza.png" alt="Gupo de Danza">
+        <img src="/Imagenes/danza.png" alt="Gupo de Danza">
       </div>
       <h3> Danza</h3>
       <p class="resena">Innovación al servicio del Evangelio. Manejamos la tecnología,
@@ -220,7 +241,7 @@ hermanos en la fe, los cuales tomaron la decisión de constituirse bajo el nombr
 
   <div class="donaciones-split-container">
     <div class="donacion-qr">
-      <img src="Imagenes/QR.jpeg"QR para donaciones" class="qr-img">
+      <img src="/Imagenes/QR.jpeg" alt="QR para donaciones" class="qr-img">
       <span>Escanea para donar</span>
     </div>
 
@@ -262,8 +283,8 @@ hermanos en la fe, los cuales tomaron la decisión de constituirse bajo el nombr
 </div>
 
       <p>📍Cra. 42h #84-54, Nte. Centro Historico, Barranquilla, Atlántico</p>
-      <p>📞 Teléfono: 300 123 4567</p>
-      <p>✉️ Email: info@iglesia.com</p>
+      <p>📞 Teléfono: 300 826 1039</p>
+      <p>✉️ Email: iglesianuevavidabq@gmail.com</p>
     </div>
 
     <!-- DERECHA -->
