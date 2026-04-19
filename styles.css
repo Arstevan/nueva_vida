@@ -29,81 +29,8 @@ body {
   z-index: 1000;
 }
 
-/* RESET */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
 
-body {
-  font-family: Arial, sans-serif;
-}
 
-/* HEADER */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 20px;
-  background: white;
-  position: relative;
-  border-bottom: 1px solid #eee;
-}
-
-.logo img {
-  height: 50px;
-}
-
-/* MENÚ */
-.menu {
-  display: flex;
-  gap: 20px;
-}
-
-.menu a {
-  text-decoration: none;
-  color: black;
-  font-weight: 500;
-}
-
-/* BOTÓN HAMBURGUESA */
-.menu-toggle {
-  display: none;
-  font-size: 30px;
-  cursor: pointer;
-}
-
-/* 📱 RESPONSIVE */
-@media (max-width: 768px) {
-
-  .menu-toggle {
-    display: block;
-  }
-
-  .menu {
-    position: absolute;
-    top: 80px;
-    left: 0;
-    width: 100%;
-    background: white;
-    flex-direction: column;
-    align-items: center;
-    display: none;
-    z-index: 999;
-  }
-
-  .menu a {
-    width: 100%;
-    padding: 15px;
-    text-align: center;
-    border-top: 1px solid #eee;
-  }
-
-  .menu.active {
-    display: flex;
-  }
-}
 
 
 .logo {
@@ -218,6 +145,57 @@ section {
   }
 }
 
+
+
+.servicios {
+  padding: 60px 20px;
+  text-align: center;
+  background: #f9f9f9;
+}
+
+.servicios h2 {
+  font-size: 32px;
+  margin-bottom: 40px;
+}
+
+.contenedor-servicios {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.servicio {
+  background: #fff;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  transition: 0.3s;
+
+  /* 🔥 NUEVO (altura mejorada) */
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.servicio:hover {
+  transform: translateY(-8px);
+}
+
+.servicio img {
+  width: 100%;
+  height: 240px; /* 🔥 imagen más alta */
+  object-fit: cover;
+}
+
+.servicio h3 {
+  margin: 15px 0 5px;
+}
+
+.servicio p {
+  margin-bottom: 15px;
+  color: #666;
+}
 
 /* --- Estilos Generales para la Sección de Ministerios --- */
 /* --- Sección General --- */
@@ -532,14 +510,29 @@ section {
 /* --- SECCIÓN DONACIONES (DISEÑO SPLIT RECARGADO) --- */
 
 /* Ajustamos el contenedor general para dar más aire */
+
+
+
+
+
 .donaciones-split-container {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 80px; /* Aumentamos el espacio entre el QR y el texto */
-  max-width: 1200px; /* Ancho máximo mayor para que el flexbox se estire */
+  gap: 80px;
+  max-width: 1200px;
   margin: 0 auto;
+
+  background-color: #ffffff; /* 🔥 Fondo blanco */
+  padding: 60px 20px; /* 🔥 Espaciado para que se vea mejor */
 }
+
+
+.donaciones {
+  background-color: #ffffff; /* 🔥 aquí va el blanco REAL */
+  padding: 80px 0;
+}
+
 
 /* Lado del QR: Le damos más "peso" en el flexbox */
 .donacion-qr {
@@ -556,7 +549,7 @@ section {
   height: auto; /* Mantiene la proporción */
   
   /* Mantengo tus estilos elegantes */
-  border: 15px solid #f8f9fa; /* Borde un poco más grueso proporcional al tamaño */
+  border: 15px solid #0a0a0a; /* Borde un poco más grueso proporcional al tamaño */
   border-radius: 25px; /* Bordes más redondeados */
   box-shadow: 0 20px 45px rgba(0,0,0,0.15); /* Sombra más pronunciada */
   margin-bottom: 20px;
@@ -564,10 +557,10 @@ section {
 
 /* Ajuste sutil para el texto debajo del QR */
 .donacion-qr span {
-  font-weight: 700; /* Más negrita */
-  color: #222;
+  font-weight: 700;
+  color: #0a0a0a; /* 🔥 ahora sí se ve */
   text-transform: uppercase;
-  font-size: 1rem; /* Un poco más grande */
+  font-size: 1rem;
 }
 
 /* Lado de la Información: Le damos menos "peso" */
