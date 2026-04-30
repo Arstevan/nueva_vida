@@ -688,18 +688,22 @@ section {
     display: block;
   }
 
-  .menu {
-    position: absolute;
-    top: 80px;
-    left: 0;
-    width: 100%;
-    background: white;
-    flex-direction: column;
-    align-items: center;
-    display: none;
-    padding: 20px 0;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-  }
+ .menu {
+  position: absolute;
+  top: 80px;
+  left: 0;
+  width: 100%;
+  background: white;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0;
+
+  /* 🔥 ANIMACIÓN */
+  transform: translateY(-20px);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
 
   .menu a {
     margin: 10px 0;
