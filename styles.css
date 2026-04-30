@@ -675,6 +675,50 @@ section {
     flex-direction: column;
     text-align: center;
   }
+
+.menu {
+  display: flex;
+  align-items: center;
+}
+
+.menu-toggle {
+  display: none;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+
+  .menu-toggle {
+    display: block;
+  }
+
+  .menu {
+    position: absolute;
+    top: 80px;
+    left: 0;
+    width: 100%;
+    background: white;
+    flex-direction: column;
+    align-items: center;
+    display: none;
+    padding: 20px 0;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  }
+
+  .menu a {
+    margin: 10px 0;
+    font-size: 18px;
+  }
+
+  .menu.active {
+    display: flex;
+  }
+
+  .header {
+    padding: 0 20px;
+  }
+}
   
   .banner {
     height: 50vh;
