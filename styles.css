@@ -666,12 +666,9 @@ section {
   color: #0a0909;
 }
 
-/* --- RESPONSIVO --- */
-@media (max-width: 768px) {
-  .nosotros-container {
-    flex-direction: column;
-    text-align: center;
-  }
+/* ============================= */
+/* ===== MENU RESPONSIVE ======= */
+/* ============================= */
 
 .menu {
   display: flex;
@@ -714,10 +711,5 @@ section {
 
   .header {
     padding: 0 20px;
-  }
-}
-  
-  .banner {
-    height: 50vh;
   }
 }
