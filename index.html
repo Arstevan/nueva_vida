@@ -325,21 +325,16 @@ hermanos en la fe, los cuales tomaron la decisión de constituirse bajo el nombr
   const toggle = document.getElementById("menu-toggle");
   const menu = document.getElementById("menu");
 
-  if (toggle && menu) {
-    toggle.addEventListener("click", () => {
-      menu.classList.toggle("active");
-    });
-  }
+  // abrir / cerrar con botón
+  toggle.addEventListener("click", () => {
+    menu.classList.toggle("active");
+  });
 
-  // 🔥 cerrar menú con pequeño delay (soluciona el problema)
-  const links = document.querySelectorAll("#menu a");
-
-  links.forEach(link => {
-    link.addEventListener("click", () => {
-      setTimeout(() => {
-        menu.classList.remove("active");
-      }, 100); // 🔥 clave
-    });
+  // 🔥 cerrar menú al hacer click en cualquier link
+  document.getElementById("menu").addEventListener("click", (e) => {
+    if (e.target.tagName === "A") {
+      menu.classList.remove("active");
+    }
   });
 </script>
 </body>
