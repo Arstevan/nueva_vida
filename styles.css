@@ -698,10 +698,11 @@ section {
   align-items: center;
   padding: 20px 0;
 
-  /* 🔥 ANIMACIÓN */
-  transform: translateY(-20px);
+  /* 🔥 estado oculto */
+  transform: translateY(-100%);
   opacity: 0;
   pointer-events: none;
+
   transition: all 0.3s ease;
 }
 
