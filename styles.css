@@ -710,9 +710,11 @@ section {
     font-size: 18px;
   }
 
-  .menu.active {
-    display: flex;
-  }
+ .menu.active {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
 
   .header {
     padding: 0 20px;
