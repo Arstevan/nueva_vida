@@ -30,23 +30,28 @@ body {
 }
 
 
+
+
+
 .logo {
   font-weight: 600;
 
 }
 
-/* LOGO */
 .logo img {
-  height: 60px;   /* 🔥 controla el tamaño */
+  height: 60px;   
   width: auto;
   display: block;
 }
+
+
+
 
 .menu a {
   margin-left: 20px;
   text-decoration: none;
   color: black;
-  font-weight: 600; /* 🔥 negrita */
+  font-weight: 600;  
 }
 
 
@@ -60,6 +65,7 @@ body {
   height: 100vh;
   overflow: hidden;
   line-height: 0;
+  background: #f8f7f7;
 }
 
 .banner img {
@@ -67,6 +73,71 @@ body {
   height: 100%;
   object-fit: cover;
   object-position: center;
+
+}
+
+
+/* ===== BANNER SLIDER ===== */
+.banner {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.slider {
+  position: relative;
+  height: 500px;
+}
+
+.slide {
+  position: absolute;
+  width: 110%;
+  height: 140%;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.slide.active {
+  opacity: 1;
+}
+
+.slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.swiper {
+  height: 80vh;
+}
+
+
+/* Flechas */
+.prev, .next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #f1efed;
+  border: none;
+  padding: 12px;
+  color: rgb(10, 10, 10);
+  font-size: 20px;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.prev { left: 20px; }
+.next { right: 20px; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .slider {
+    height: 280px;
+  }
+
+  .contenido h1 {
+    font-size: 28px;
+  }
 }
 
 /* SECCIONES */
@@ -664,6 +735,18 @@ section {
   font-size: 1.5rem;
   margin: 0 10px;
   color: #0a0909;
+}
+
+/* --- RESPONSIVO --- */
+@media (max-width: 768px) {
+  .nosotros-container {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .banner {
+    height: 50vh;
+  }
 }
 
 /* ============================= */
