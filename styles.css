@@ -61,11 +61,12 @@ body {
 
 /* BANNER */
 .banner {
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: calc(100vh - 80px);
+  margin-top: 80px;
   overflow: hidden;
-  line-height: 0;
   background: #f8f7f7;
+  position: relative;
 }
 
 .banner img {
@@ -149,31 +150,37 @@ body {
     font-size: 28px;
   }
 }
+
+
 /* SECCIONES */
 section {
-  padding: 80px 40px;
-  text-align: center;
+  padding: 120px 40px;
+  position: relative;
 }
 
 .nosotros {
-  padding: 100px 10%;
-  background-color: #ffffff;
-  font-family: 'Poppins', sans-serif;
+  padding: 140px 10%;
+  background: #ffffff;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
 }
 
 .nosotros-container {
   display: flex;
-  align-items: center; /* Centra verticalmente logo y texto */
-  justify-content: center;
-  gap: 80px; /* Espacio entre el logo y el párrafo */
-  max-width: 1200px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 70px;
+  width: 100%;
+  max-width: 1300px;
   margin: 0 auto;
 }
 
 /* --- Lado del Logo --- */
-.nosotros-logo {
-  flex: 1;
-  text-align: center;
+.nosotros-logo img {
+  width: 100%;
+  max-width: 500px;
+  height: auto;
 }
 
 .nosotros-logo img {
@@ -199,7 +206,7 @@ section {
     display: block;          /* Para que el título ocupe toda la línea */
     font-weight: bold;       /* Aplica la negrita */
     text-align: center;      /* Centra el título como en la imagen */
-    font-size: 1.2rem;       /* Ajusta el tamaño si es necesario */
+    font-size: 1.8rem;       /* Ajusta el tamaño si es necesario */
     margin-bottom: 15px;     /* Separa el título del párrafo */
     color: #000000;          /* Asegura que el color sea negro sólido */
 }
@@ -233,6 +240,7 @@ section {
 .servicios h2 {
   font-size: 32px;
   margin-bottom: 40px;
+  font-size: 1.8rem;
 }
 
 .contenedor-servicios {
@@ -284,7 +292,7 @@ section {
 }
 
 .ministerios h2 {
-  font-size: 3rem;
+  font-size: 1.8rem;
   color: #fdfbfb;
   margin-bottom: 60px;
   font-weight: 800;
@@ -422,7 +430,7 @@ section {
 }
 
 .predicas h2 {
-  font-size: 2.5rem;
+  font-size: 1.8rem;
   margin-bottom: 40px;
 }
 
@@ -646,6 +654,23 @@ section {
   text-align: left;
 }
 
+.section-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 25px;
+  color: #111;
+  width: 100%;
+}
+.donaciones-intro {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto 60px;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
 
 .contacto {
   padding: 80px 10%;
@@ -656,7 +681,7 @@ section {
 .contacto h2 {
   text-align: center;
   margin-bottom: 40px;
-  font-size: 2rem;
+  font-size: 1.8rem;
 }
 
 .contenedor-contacto {
@@ -811,5 +836,52 @@ section {
 
   .header {
     padding: 0 20px;
+  }
+}
+
+/* EVITA QUE LAS SECCIONES SE MONTEN */
+.servicios,
+.ministerios,
+.predicas,
+.consejeria,
+.donaciones,
+.contacto {
+  position: relative;
+  z-index: 1;
+}
+
+/* MÁS ESPACIO ENTRE SECCIONES */
+.servicios {
+  padding-top: 140px;
+}
+
+/* ARREGLA ESPACIOS EN MOBILE */
+@media (max-width: 768px) {
+
+  section {
+    padding: 90px 20px;
+  }
+
+  .nosotros {
+    min-height: auto;
+    padding-top: 120px;
+  }
+
+  .nosotros-container {
+    flex-direction: column;
+    text-align: center;
+    gap: 40px;
+  }
+
+  .nosotros-logo img {
+    max-width: 300px;
+  }
+
+  .nosotros-texto p {
+    text-align: center;
+  }
+
+  .contenedor-servicios {
+    grid-template-columns: 1fr;
   }
 }
