@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nueva Vida - Panel de Consejería</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+    body { background: #f8f9fa; color: #111; }
+    
+    /* Barra Superior */
+    .nav-panel { background: #fff; height: 70px; padding: 0 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    .nav-panel h1 { font-size: 1.3rem; font-weight: 700; }
+    .btn-logout { color: #e74c3c; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: 0.3s; }
+    .btn-logout:hover { text-decoration: underline; }
+
+    /* Contenedor Principal */
+    .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; display: flex; gap: 40px; flex-wrap: wrap; }
+    .col-form, .col-citas { background: #fff; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.02); flex: 1; min-width: 320px; }
+    
+    h2 { font-size: 1.4rem; margin-bottom: 25px; font-weight: 700; position: relative; padding-bottom: 10px; }
+    h2::after { content: ''; position: absolute; bottom: 0; left: 0; width: 40px; height: 3px; background: #000; }
+
+    /* Formulario */
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; }
+    .form-group input, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 0.95rem; outline: none; transition: 0.3s; }
+    .form-group input:focus, .form-group textarea:focus { border-color: #000; }
+    .form-group textarea { height: 100px; resize: none; }
+    .btn-submit { width: 100%; padding: 14px; background: #000; color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; font-size: 1rem; }
+    .btn-submit:hover { background: #333; }
+
+    /* Tarjetas de Citas */
+    .citas-lista { display: flex; flex-direction: column; gap: 15px; }
+    .cita-card { border: 1px solid #eee; padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; }
+    .cita-card:hover { border-color: #ddd; transform: translateY(-2px); }
+    .cita-info p { margin-bottom: 4px; font-size: 0.95rem; }
+    .cita-motivo { color: #666; font-size: 0.9rem !important; }
+    
+    /* Estados */
+    .badge { padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; }
+    .badge.pendiente { background: #ffeaa7; color: #b7791f; }
+    .badge.confirmada { background: #badc58; color: #6ab04c; }
+    
+    /* Alertas */
+    .alert { padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 0.95rem; font-weight: 500; }
+    .alert.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .alert.warning { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+    .no-citas { text-align: center; color: #999; padding: 40px 0; font-size: 0.95rem; }
+  </style>
+</head>
+<body>
+
+  <nav class="nav-panel">
+    <h1><i class="fas fa-user-circle"></i> Bienvenido, {{ session['usuario_nombre'] }}</h1>
+    <a href="{{ url_for('logout') }}" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+  </nav>
+
+  <div class="container">
+    
+    <div class="col-form">
+      <h2>Agendar una Cita</h2>
+      
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert {{ category }}">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <form action="{{ url_for('panel_usuario') }}" method="POST">
+        <div class="form-group">
+          <label for="motivo">Motivo de la Consejería</label>
+          <textarea name="motivo" id="motivo" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="fecha">Fecha Sugerida</label>
+          <input type="date" name="fecha" id="fecha" required>
+        </div>
+        <div class="form-group">
+          <label for="hora">Hora Sugerida</label>
+          <input type="time" name="hora" id="hora" required>
+        </div>
+        <button type="submit" class="btn-submit">Enviar Solicitud</button>
+      </form> 
+    </div>
+
+    <div class="col-citas">
+      <h2>Mis Citas Espirituales</h2>
+      
+      <div class="citas-lista">
+        {% if citas %}
+          {% for cita in citas %}
+            <div class="cita-card">
+              <div class="cita-info">
+                <p><strong><i class="far fa-calendar-alt"></i> Fecha:</strong> {{ cita.Fecha }}</p>
+                <p><strong><i class="far fa-clock"></i> Hora:</strong> {{ cita.Hora }}</p>
+                <p class="cita-motivo"><strong>Motivo:</strong> {{ cita.Especialidad }}</p>
+              </div>
+              <div>
+                <span class="badge {% if cita.Estado|lower == 'pendiente' %}pendiente{% else %}confirmada{% endif %}">
+                  {{ cita.Estado }}
+                </span>
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="no-citas">
+            <i class="fas fa-calendar-times" style="font-size: 2.5rem; display:block; margin-bottom:10px;"></i>
+            No tienes citas registradas en este momento.
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+</body>
