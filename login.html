@@ -3,36 +3,44 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Iniciar Sesión | Nueva Vida</title>
-
-  <!-- GOOGLE FONTS -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap"
-        rel="stylesheet">
-
-  <!-- FONT AWESOME -->
-  <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-  <!-- CSS -->
-  <link rel="stylesheet"
-        href="{{ url_for('static', filename='styles.css') }}">
-
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <style>
+    /* Estilo para el cuadro de mensaje flash */
+    .flash-message {
+      padding: 12px;
+      margin-bottom: 20px;
+      border-radius: 6px;
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+  </style>
 </head>
 
 <body>
 
 <section class="login-page">
-
   <div class="login-card">
 
     <div class="login-logo">
-      <img src="{{ url_for('static', filename='Imagenes/logo NV negro.png') }}"
-           alt="Logo Nueva Vida">
+      <img src="{{ url_for('static', filename='Imagenes/logo NV negro.png') }}" alt="Logo Nueva Vida">
     </div>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="flash-message">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
 
     <h2>Bienvenido</h2>
 
@@ -41,41 +49,24 @@
     </p>
 
     <form class="login-form" method="POST">
-
       <div class="input-group">
         <i class="fas fa-envelope"></i>
-
-        <input type="email"
-       name="email"
-       placeholder="Correo electrónico"
-       required>
-
+        <input type="email" name="email" placeholder="Correo electrónico" required>
       </div>
-
       <div class="input-group">
         <i class="fas fa-lock"></i>
-
-        <input type="password"
-       name="contrasena"
-       placeholder="Contraseña"
-       required>
-       
+        <input type="password" name="contrasena" placeholder="Contraseña" required>
       </div>
-
       <button type="submit" class="btn-login-form">
         Iniciar Sesión
       </button>
-
     </form>
 
     <div class="extra-links">
-      <a href="{{ url_for('registro') }}">
-        Crear cuenta
-      </a>
+      <a href="{{ url_for('registro') }}">Crear cuenta</a>
     </div>
 
   </div>
-
 </section>
 
 </body>
