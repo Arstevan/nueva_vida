@@ -31,16 +31,19 @@ def registro():
         apellidos = request.form['apellidos']
         email = request.form['email']
         contrasena = request.form['contrasena']
-        rol = 'usuario'
+        rol = 'miembro' # Ajustado al valor que vi en tu base de datos
         
         cursor = mysql.connection.cursor()
-        cursor.execute("INSERT INTO usuarios (Nombres, Apellidos, Email, Contrasena, Rol) VALUES (%s, %s, %s, %s, %s)", 
+        # Asegúrate de que los nombres de columnas coincidan con tu tabla 'usuarios'
+        cursor.execute("INSERT INTO usuarios (Nombres, Apellidos, Email, Contrasena, rol) VALUES (%s, %s, %s, %s, %s)", 
                        (nombres, apellidos, email, contrasena, rol))
         mysql.connection.commit()
+        cursor.close() # Buena práctica cerrar el cursor
+        
         flash('Registro exitoso, ahora puedes iniciar sesión.', 'success')
         return redirect(url_for('login'))
+        
     return render_template('registro.html')
-
 # ==============================
 # ==============================
 # RUTA LOGIN
@@ -96,14 +99,46 @@ def panel_usuario():
     return render_template('panel_usuario.html', citas=citas)
 
 # ==============================
-# RUTA PANEL ADMIN
+# RUTA CAMBIAR ESTADO CITA
+# ==============================
+@app.route('/cambiar-estado/<int:id_cita>/<string:nuevo_estado>', methods=['POST'])
+def cambiar_estado_cita(id_cita, nuevo_estado):
+    if 'usuario_id' not in session or session['usuario_rol'] != 'admin':
+        flash("Acceso denegado", "error")
+        return redirect(url_for('login'))
+    
+    cursor = mysql.connection.cursor()
+    # Actualiza el estado en la base de datos
+    cursor.execute("UPDATE citas SET Estado = %s WHERE Id_citas = %s", (nuevo_estado, id_cita))
+    mysql.connection.commit()
+    cursor.close()
+    
+    flash(f"Cita actualizada a {nuevo_estado}", "success")
+    return redirect(url_for('panel_admin'))
+
+# ==============================
+# RUTA PANEL ADMIN (CORREGIDA)
 # ==============================
 @app.route('/panel-admin')
 def panel_admin():
-    if 'usuario_id' not in session or session['usuario_rol'] != 'admin':
+    # Verificación de seguridad
+    if 'usuario_id' not in session or session.get('usuario_rol') != 'admin':
         return redirect(url_for('login'))
-    return render_template('panel_admin.html')
-
+    
+    cursor = mysql.connection.cursor()
+    
+    # La consulta con JOIN es lo que permite que {{ cita.NombreMiembro }} funcione
+    query = """
+        SELECT c.*, u.Nombres AS NombreMiembro, u.Apellidos AS ApellidoMiembro 
+        FROM citas c
+        JOIN usuarios u ON c.Id_miembro = u.Id_miembro
+        ORDER BY c.Fecha ASC
+    """
+    cursor.execute(query)
+    citas = cursor.fetchall()
+    cursor.close()
+    
+    return render_template('panel_admin.html', citas=citas)
 # ==============================
 # RUTA LOGOUT
 # ==============================
@@ -113,4 +148,5 @@ def logout():
     return redirect(url_for('login'))
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # 'use_reloader=False' evita que se reinicie solo
+    app.run(debug=True, use_reloader=False)
