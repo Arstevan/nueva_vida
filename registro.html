@@ -1,98 +1,48 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nueva Vida - Panel de Administración</title>
+  <title>Nueva Vida - Registro</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-    body { background: #f8f9fa; color: #111; }
-    .navbar { background: #fff; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
-    .navbar h1 { font-size: 1.2rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
-    .navbar h1 span { color: #666; font-weight: 400; }
-    .btn-logout { color: #e74c3c; text-decoration: none; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: 0.3s; }
-    .btn-logout:hover { color: #c0392b; }
-    .main-container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
-    .header-seccion { margin-bottom: 30px; }
-    .header-seccion h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: 5px; }
-    .alert { padding: 15px; border-radius: 8px; margin-bottom: 25px; font-size: 0.9rem; font-weight: 600; }
-    .alert.success { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
-    .alert.danger { background: #fde8e8; color: #e74c3c; border: 1px solid #f8b4b4; }
-    .tabla-container { background: #fff; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.02); overflow: hidden; }
-    table { width: 100%; border-collapse: collapse; text-align: left; }
-    th, td { padding: 18px 24px; font-size: 0.9rem; }
-    th { background: #f1f3f5; font-weight: 600; color: #444; border-bottom: 2px solid #eaeaea; }
-    tr { border-bottom: 1px solid #f1f1f1; }
-    .badge { padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; display: inline-block; }
-    .badge.pendiente { background: #fff3cd; color: #856404; }
-    .badge.confirmada { background: #cce5ff; color: #004085; }
-    .badge.completada { background: #d4edda; color: #155724; }
-    .btn-accion { padding: 8px 14px; border: none; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; }
-    .btn-confirmar { background: #000; color: #fff; }
-    .btn-completar { background: #28a745; color: #fff; }
-    .sin-citas { padding: 40px; text-align: center; color: #888; }
+    body { background: #f8f9fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+    .form-container { background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); width: 100%; max-width: 400px; }
+    h2 { font-size: 1.5rem; font-weight: 800; margin-bottom: 20px; text-align: center; color: #111; }
+    input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.9rem; }
+    button { width: 100%; padding: 12px; background: #000; color: #fff; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.3s; }
+    button:hover { background: #333; }
+    p { margin-top: 15px; text-align: center; font-size: 0.9rem; color: #666; }
+    a { color: #000; font-weight: 600; text-decoration: none; }
+    .alert { padding: 10px; border-radius: 5px; margin-bottom: 15px; text-align: center; font-size: 0.85rem; }
+    .alert-error { background: #fde8e8; color: #e74c3c; }
   </style>
 </head>
 <body>
 
-  <nav class="navbar">
-    <h1><i class="fas fa-chart-line"></i> Panel Administrativo <span>| Hola, {{ session['usuario_nombre'] }}</span></h1>
-    <a href="{{ url_for('logout') }}" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
-  </nav>
-
-  <main class="main-container">
-    <div class="header-seccion">
-      <h2>Gestión de Citas Espirituales</h2>
-    </div>
-
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}{% for category, message in messages %}
-        <div class="alert {{ category }}"><i class="fas fa-info-circle"></i> {{ message }}</div>
-      {% endfor %}{% endif %}
+  <div class="form-container">
+    <h2>Crear Cuenta</h2>
+    
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-error">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
     {% endwith %}
 
-    <div class="tabla-container">
-      {% if citas %}
-        <table>
-          <thead>
-            <tr>
-              <th>Miembro</th>
-              <th>Fecha</th>
-              <th>Hora</th>
-              <th>Motivo</th>
-              <th>Estado</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for cita in citas %}
-              <tr>
-                <td><strong>{{ cita.NombreMiembro }} {{ cita.ApellidoMiembro }}</strong></td>
-                <td>{{ cita.Fecha }}</td>
-                <td>{{ cita.Hora }}</td>
-                <td>{{ cita.Especialidad or 'No especificado' }}</td>
-                <td><span class="badge {{ cita.Estado | lower }}">{{ cita.Estado }}</span></td>
-                <td class="acciones-buttons">
-                  {% if cita.Estado == 'Pendiente' %}
-                    <form action="{{ url_for('cambiar_estado_cita', id_cita=cita.Id_citas, nuevo_estado='Confirmada') }}" method="POST">
-                      <button type="submit" class="btn-accion btn-confirmar"><i class="fas fa-check"></i> Confirmar</button>
-                    </form>
-                  {% elif cita.Estado == 'Confirmada' %}
-                    <form action="{{ url_for('cambiar_estado_cita', id_cita=cita.Id_citas, nuevo_estado='Completada') }}" method="POST">
-                      <button type="submit" class="btn-accion btn-completar"><i class="fas fa-check-double"></i> Completar</button>
-                    </form>
-                  {% endif %}
-                </td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      {% else %}
-        <div class="sin-citas"><i class="fas fa-calendar-times"></i> No hay citas registradas.</div>
-      {% endif %}
-    </div>
-  </main>
+    <form action="{{ url_for('registro') }}" method="POST">
+      <input type="text" name="nombres" placeholder="Nombres" required>
+      <input type="text" name="apellidos" placeholder="Apellidos" required>
+      <input type="email" name="email" placeholder="Correo Electrónico" required>
+      <input type="password" name="contrasena" placeholder="Contraseña" required>
+      <button type="submit">Registrarse</button>
+    </form>
+
+    <p>¿Ya tienes cuenta? <a href="{{ url_for('login') }}">Inicia sesión</a></p>
+  </div>
+
 </body>
 </html>
