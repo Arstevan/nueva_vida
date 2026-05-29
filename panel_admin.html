@@ -9,14 +9,16 @@
     <nav class="navbar navbar-dark bg-dark mb-4">
         <div class="container">
             <span class="navbar-brand">Panel de Administrador - Iglesia Nueva Vida</span>
-            <a href="{{ url_for('logout') }}" class="btn btn-danger">Cerrar Sesión</a>
+            <div>
+                <a href="{{ url_for('historial_citas') }}" class="btn btn-outline-light me-2">Ver Historial Completo</a>
+                <a href="{{ url_for('logout') }}" class="btn btn-danger">Cerrar Sesión</a>
+            </div>
         </div>
     </nav>
 
     <div class="container">
         <h2>Gestión de Citas de Consejería</h2>
         
-        <!-- Bloque para mostrar mensajes de éxito/error -->
         {% with messages = get_flashed_messages() %}
           {% if messages %}
             {% for message in messages %}
