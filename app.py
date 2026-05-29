@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_mysqldb import MySQL
-from flask_mail import Mail, Message # 1. IMPORTAR LIBRERÍAS DE CORREO
+from flask_mail import Mail, Message
 
 app = Flask(__name__)
 app.secret_key = 'nueva_vida_secret'
@@ -12,15 +12,15 @@ app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'consejeria_nv'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
-# 2. CONFIGURACIÓN DE MAIL (AJUSTA CON TUS DATOS)
+# Configuración de Mail
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'iglesianuevavidabq@gmail.com' # CAMBIA ESTO
-app.config['MAIL_PASSWORD'] = 'souc mggu iqzc wstc'      # CAMBIA ESTO (Contraseña de App)
+app.config['MAIL_USERNAME'] = 'iglesianuevavidabq@gmail.com'
+app.config['MAIL_PASSWORD'] = 'souc mggu iqzc wstc' 
 
 mysql = MySQL(app)
-mail = Mail(app) # 3. INICIALIZAR MAIL
+mail = Mail(app)
 
 # ==============================
 # RUTA INICIO
@@ -43,7 +43,7 @@ def registro():
         
         cursor = mysql.connection.cursor()
         cursor.execute("INSERT INTO usuarios (Nombres, Apellidos, Email, Contrasena, rol) VALUES (%s, %s, %s, %s, %s)", 
-                        (nombres, apellidos, email, contrasena, rol))
+                       (nombres, apellidos, email, contrasena, rol))
         mysql.connection.commit()
         cursor.close()
         
@@ -92,7 +92,7 @@ def panel_usuario():
         
         cursor = mysql.connection.cursor()
         cursor.execute("INSERT INTO citas (Especialidad, Fecha, Hora, Id_miembro, Estado) VALUES (%s, %s, %s, %s, %s)", 
-                        (motivo, fecha, hora, session['usuario_id'], 'Pendiente'))
+                       (motivo, fecha, hora, session['usuario_id'], 'Pendiente'))
         mysql.connection.commit()
         flash('Solicitud enviada con éxito', 'success')
         return redirect(url_for('panel_usuario'))
@@ -100,11 +100,12 @@ def panel_usuario():
     cursor = mysql.connection.cursor()
     cursor.execute("SELECT * FROM citas WHERE Id_miembro = %s ORDER BY Fecha DESC", (session['usuario_id'],))
     citas = cursor.fetchall()
+    cursor.close()
     
     return render_template('panel_usuario.html', citas=citas)
 
 # ==============================
-# RUTA CAMBIAR ESTADO CITA (CORREO DETALLADO)
+# RUTA CAMBIAR ESTADO CITA
 # ==============================
 @app.route('/cambiar-estado/<int:id_cita>/<string:nuevo_estado>', methods=['POST'])
 def cambiar_estado_cita(id_cita, nuevo_estado):
@@ -114,7 +115,6 @@ def cambiar_estado_cita(id_cita, nuevo_estado):
 
     cursor = mysql.connection.cursor()
     
-    # 1. Obtenemos datos del usuario y de la cita
     cursor.execute("""
         SELECT u.Email, u.Nombres, c.Fecha, c.Hora 
         FROM usuarios u 
@@ -123,17 +123,14 @@ def cambiar_estado_cita(id_cita, nuevo_estado):
     """, (id_cita,))
     usuario = cursor.fetchone()
     
-    # 2. Actualizamos el estado
     cursor.execute("UPDATE citas SET Estado = %s WHERE Id_citas = %s", (nuevo_estado, id_cita))
     mysql.connection.commit()
     
-    # 3. Si se confirma, enviamos el correo detallado
     if nuevo_estado == 'Confirmada' and usuario:
         msg = Message("Cita Confirmada - Iglesia Nueva Vida",
                       sender="iglesianuevavidabq@gmail.com",
                       recipients=[usuario['Email']])
         
-        # Cuerpo del mensaje profesional
         msg.body = (f"¡Hola, {usuario['Nombres']}!\n\n"
                     f"Reciba un cordial saludo de parte de la Iglesia Nueva Vida.\n\n"
                     f"Nos complace informarle que su solicitud de cita de consejería ha sido aprobada y confirmada exitosamente.\n\n"
@@ -158,7 +155,7 @@ def cambiar_estado_cita(id_cita, nuevo_estado):
     return redirect(url_for('panel_admin'))
 
 # ==============================
-# RUTA PANEL ADMIN (FILTRANDO CITAS)
+# RUTA PANEL ADMIN (FILTRADO)
 # ==============================
 @app.route('/panel-admin')
 def panel_admin():
@@ -166,7 +163,6 @@ def panel_admin():
         return redirect(url_for('login'))
     
     cursor = mysql.connection.cursor()
-    # AGREGAMOS EL FILTRO: WHERE c.Estado != 'Cancelada'
     query = """
         SELECT c.*, u.Nombres AS NombreMiembro, u.Apellidos AS ApellidoMiembro 
         FROM citas c
@@ -179,6 +175,7 @@ def panel_admin():
     cursor.close()
     
     return render_template('panel_admin.html', citas=citas)
+
 # ==============================
 # RUTA LOGOUT
 # ==============================
@@ -186,6 +183,29 @@ def panel_admin():
 def logout():
     session.clear()
     return redirect(url_for('login'))
+
+
+# ==============================
+# RUTA HISTORIAL DE CITAS
+# ==============================
+@app.route('/historial-citas')
+def historial_citas():
+    if 'usuario_id' not in session or session.get('usuario_rol') != 'admin':
+        return redirect(url_for('login'))
+    
+    cursor = mysql.connection.cursor()
+    # Esta consulta trae TODAS las citas, incluyendo las canceladas
+    query = """
+        SELECT c.*, u.Nombres AS NombreMiembro, u.Apellidos AS ApellidoMiembro 
+        FROM citas c
+        JOIN usuarios u ON c.Id_miembro = u.Id_miembro
+        ORDER BY c.Fecha DESC
+    """
+    cursor.execute(query)
+    citas = cursor.fetchall()
+    cursor.close()
+    
+    return render_template('historial.html', citas=citas)
 
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=False)
