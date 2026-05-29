@@ -104,37 +104,53 @@ def panel_usuario():
     return render_template('panel_usuario.html', citas=citas)
 
 # ==============================
-# RUTA CAMBIAR ESTADO CITA (CON NOTIFICACIÓN)
+# RUTA CAMBIAR ESTADO CITA (CORREO DETALLADO)
 # ==============================
 @app.route('/cambiar-estado/<int:id_cita>/<string:nuevo_estado>', methods=['POST'])
 def cambiar_estado_cita(id_cita, nuevo_estado):
     if 'usuario_id' not in session or session['usuario_rol'] != 'admin':
         flash("Acceso denegado", "error")
         return redirect(url_for('login'))
-    
+
     cursor = mysql.connection.cursor()
     
-    # Obtenemos email del miembro antes de actualizar
+    # 1. Obtenemos datos del usuario y de la cita
     cursor.execute("""
-        SELECT u.Email, u.Nombres 
+        SELECT u.Email, u.Nombres, c.Fecha, c.Hora 
         FROM usuarios u 
         JOIN citas c ON u.Id_miembro = c.Id_miembro 
         WHERE c.Id_citas = %s
     """, (id_cita,))
     usuario = cursor.fetchone()
     
-    # Actualizamos el estado
+    # 2. Actualizamos el estado
     cursor.execute("UPDATE citas SET Estado = %s WHERE Id_citas = %s", (nuevo_estado, id_cita))
     mysql.connection.commit()
     
-    # Si se confirma, enviamos correo
+    # 3. Si se confirma, enviamos el correo detallado
     if nuevo_estado == 'Confirmada' and usuario:
         msg = Message("Cita Confirmada - Iglesia Nueva Vida",
-                      sender="iglesianuevavidabq@gmail.com", 
+                      sender="iglesianuevavidabq@gmail.com",
                       recipients=[usuario['Email']])
-        msg.body = f"Hola {usuario['Nombres']}, nos alegra informarte que tu cita de consejería ha sido confirmada. ¡Te esperamos en la Iglesia Nueva Vida!"
-        mail.send(msg)
-        flash(f"Cita confirmada y correo enviado a {usuario['Nombres']}", "success")
+        
+        # Cuerpo del mensaje profesional
+        msg.body = (f"¡Hola, {usuario['Nombres']}!\n\n"
+                    f"Reciba un cordial saludo de parte de la Iglesia Nueva Vida.\n\n"
+                    f"Nos complace informarle que su solicitud de cita de consejería ha sido aprobada y confirmada exitosamente.\n\n"
+                    f"Detalles de su cita:\n"
+                    f"📅 Fecha: {usuario['Fecha']}\n"
+                    f"⏰ Hora: {usuario['Hora']}\n\n"
+                    f"Le recordamos asistir puntualmente. Si por algún motivo no puede asistir, le agradecemos notificarnos con antelación a través de nuestra plataforma o contactando a la iglesia.\n\n"
+                    f"¡Estamos atentos para servirle y compartir juntos en este tiempo de bendición!\n\n"
+                    f"Atentamente,\n"
+                    f"Equipo de Consejería - Iglesia Nueva Vida")
+        
+        try:
+            mail.send(msg)
+            flash(f"Cita confirmada y correo enviado a {usuario['Nombres']}", "success")
+        except Exception as e:
+            flash("Cita confirmada, pero hubo un problema al enviar el correo.", "warning")
+            print(f"Error: {e}")
     else:
         flash(f"Cita actualizada a {nuevo_estado}", "success")
     
