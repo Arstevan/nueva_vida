@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_mysqldb import MySQL
+from flask_mail import Mail, Message # 1. IMPORTAR LIBRERÍAS DE CORREO
 
 app = Flask(__name__)
 app.secret_key = 'nueva_vida_secret'
@@ -9,10 +10,17 @@ app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'consejeria_nv'
-# Importante: Esto ayuda a que los resultados sean más fáciles de manejar como diccionarios
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
+# 2. CONFIGURACIÓN DE MAIL (AJUSTA CON TUS DATOS)
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'armeniogm1987@gmail.com' # CAMBIA ESTO
+app.config['MAIL_PASSWORD'] = 'nurq ggdm wnmi hojm'      # CAMBIA ESTO (Contraseña de App)
+
 mysql = MySQL(app)
+mail = Mail(app) # 3. INICIALIZAR MAIL
 
 # ==============================
 # RUTA INICIO
@@ -31,20 +39,19 @@ def registro():
         apellidos = request.form['apellidos']
         email = request.form['email']
         contrasena = request.form['contrasena']
-        rol = 'miembro' # Ajustado al valor que vi en tu base de datos
+        rol = 'miembro' 
         
         cursor = mysql.connection.cursor()
-        # Asegúrate de que los nombres de columnas coincidan con tu tabla 'usuarios'
         cursor.execute("INSERT INTO usuarios (Nombres, Apellidos, Email, Contrasena, rol) VALUES (%s, %s, %s, %s, %s)", 
-                       (nombres, apellidos, email, contrasena, rol))
+                        (nombres, apellidos, email, contrasena, rol))
         mysql.connection.commit()
-        cursor.close() # Buena práctica cerrar el cursor
+        cursor.close()
         
         flash('Registro exitoso, ahora puedes iniciar sesión.', 'success')
         return redirect(url_for('login'))
         
     return render_template('registro.html')
-# ==============================
+
 # ==============================
 # RUTA LOGIN
 # ==============================
@@ -58,10 +65,8 @@ def login():
         usuario = cursor.fetchone()
         
         if usuario:
-            # AQUÍ ESTABA EL ERROR: Cambiamos 'Id_usuario' por 'Id_miembro'
             session['usuario_id'] = usuario['Id_miembro'] 
             session['usuario_nombre'] = usuario['Nombres']
-            # Asegúrate que el campo en tu BD se llame 'rol' o 'Rol' (mira tu tabla)
             session['usuario_rol'] = usuario['rol'] 
             
             if usuario['rol'] == 'admin':
@@ -71,6 +76,7 @@ def login():
         else:
             flash("Correo o contraseña incorrectos", "error")
     return render_template('login.html')
+
 # ==============================
 # RUTA PANEL USUARIO
 # ==============================
@@ -86,12 +92,11 @@ def panel_usuario():
         
         cursor = mysql.connection.cursor()
         cursor.execute("INSERT INTO citas (Especialidad, Fecha, Hora, Id_miembro, Estado) VALUES (%s, %s, %s, %s, %s)", 
-                       (motivo, fecha, hora, session['usuario_id'], 'Pendiente'))
+                        (motivo, fecha, hora, session['usuario_id'], 'Pendiente'))
         mysql.connection.commit()
         flash('Solicitud enviada con éxito', 'success')
         return redirect(url_for('panel_usuario'))
 
-    # Obtenemos las citas
     cursor = mysql.connection.cursor()
     cursor.execute("SELECT * FROM citas WHERE Id_miembro = %s ORDER BY Fecha DESC", (session['usuario_id'],))
     citas = cursor.fetchall()
@@ -99,7 +104,7 @@ def panel_usuario():
     return render_template('panel_usuario.html', citas=citas)
 
 # ==============================
-# RUTA CAMBIAR ESTADO CITA
+# RUTA CAMBIAR ESTADO CITA (CON NOTIFICACIÓN)
 # ==============================
 @app.route('/cambiar-estado/<int:id_cita>/<string:nuevo_estado>', methods=['POST'])
 def cambiar_estado_cita(id_cita, nuevo_estado):
@@ -108,26 +113,43 @@ def cambiar_estado_cita(id_cita, nuevo_estado):
         return redirect(url_for('login'))
     
     cursor = mysql.connection.cursor()
-    # Actualiza el estado en la base de datos
+    
+    # Obtenemos email del miembro antes de actualizar
+    cursor.execute("""
+        SELECT u.Email, u.Nombres 
+        FROM usuarios u 
+        JOIN citas c ON u.Id_miembro = c.Id_miembro 
+        WHERE c.Id_citas = %s
+    """, (id_cita,))
+    usuario = cursor.fetchone()
+    
+    # Actualizamos el estado
     cursor.execute("UPDATE citas SET Estado = %s WHERE Id_citas = %s", (nuevo_estado, id_cita))
     mysql.connection.commit()
-    cursor.close()
     
-    flash(f"Cita actualizada a {nuevo_estado}", "success")
+    # Si se confirma, enviamos correo
+    if nuevo_estado == 'Confirmada' and usuario:
+        msg = Message("Cita Confirmada - Iglesia Nueva Vida",
+                      sender="armeniogm1987@gmail.com", 
+                      recipients=[usuario['Email']])
+        msg.body = f"Hola {usuario['Nombres']}, nos alegra informarte que tu cita de consejería ha sido confirmada. ¡Te esperamos en la Iglesia Nueva Vida!"
+        mail.send(msg)
+        flash(f"Cita confirmada y correo enviado a {usuario['Nombres']}", "success")
+    else:
+        flash(f"Cita actualizada a {nuevo_estado}", "success")
+    
+    cursor.close()
     return redirect(url_for('panel_admin'))
 
 # ==============================
-# RUTA PANEL ADMIN (CORREGIDA)
+# RUTA PANEL ADMIN
 # ==============================
 @app.route('/panel-admin')
 def panel_admin():
-    # Verificación de seguridad
     if 'usuario_id' not in session or session.get('usuario_rol') != 'admin':
         return redirect(url_for('login'))
     
     cursor = mysql.connection.cursor()
-    
-    # La consulta con JOIN es lo que permite que {{ cita.NombreMiembro }} funcione
     query = """
         SELECT c.*, u.Nombres AS NombreMiembro, u.Apellidos AS ApellidoMiembro 
         FROM citas c
@@ -139,6 +161,7 @@ def panel_admin():
     cursor.close()
     
     return render_template('panel_admin.html', citas=citas)
+
 # ==============================
 # RUTA LOGOUT
 # ==============================
@@ -148,5 +171,4 @@ def logout():
     return redirect(url_for('login'))
 
 if __name__ == '__main__':
-    # 'use_reloader=False' evita que se reinicie solo
     app.run(debug=True, use_reloader=False)
