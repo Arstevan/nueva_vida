@@ -182,7 +182,8 @@ def panel_admin():
 @app.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('login'))
+    # Cambiamos 'login' por 'inicio' para que redirija a la página principal
+    return redirect(url_for('consejeria'))
 
 
 # ==============================
