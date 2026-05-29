@@ -158,7 +158,7 @@ def cambiar_estado_cita(id_cita, nuevo_estado):
     return redirect(url_for('panel_admin'))
 
 # ==============================
-# RUTA PANEL ADMIN
+# RUTA PANEL ADMIN (FILTRANDO CITAS)
 # ==============================
 @app.route('/panel-admin')
 def panel_admin():
@@ -166,10 +166,12 @@ def panel_admin():
         return redirect(url_for('login'))
     
     cursor = mysql.connection.cursor()
+    # AGREGAMOS EL FILTRO: WHERE c.Estado != 'Cancelada'
     query = """
         SELECT c.*, u.Nombres AS NombreMiembro, u.Apellidos AS ApellidoMiembro 
         FROM citas c
         JOIN usuarios u ON c.Id_miembro = u.Id_miembro
+        WHERE c.Estado != 'Cancelada'
         ORDER BY c.Fecha ASC
     """
     cursor.execute(query)
@@ -177,7 +179,6 @@ def panel_admin():
     cursor.close()
     
     return render_template('panel_admin.html', citas=citas)
-
 # ==============================
 # RUTA LOGOUT
 # ==============================
