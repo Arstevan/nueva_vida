@@ -16,8 +16,8 @@ app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'armeniogm1987@gmail.com' # CAMBIA ESTO
-app.config['MAIL_PASSWORD'] = 'nurq ggdm wnmi hojm'      # CAMBIA ESTO (Contraseña de App)
+app.config['MAIL_USERNAME'] = 'iglesianuevavidabq@gmail.com' # CAMBIA ESTO
+app.config['MAIL_PASSWORD'] = 'souc mggu iqzc wstc'      # CAMBIA ESTO (Contraseña de App)
 
 mysql = MySQL(app)
 mail = Mail(app) # 3. INICIALIZAR MAIL
@@ -130,7 +130,7 @@ def cambiar_estado_cita(id_cita, nuevo_estado):
     # Si se confirma, enviamos correo
     if nuevo_estado == 'Confirmada' and usuario:
         msg = Message("Cita Confirmada - Iglesia Nueva Vida",
-                      sender="armeniogm1987@gmail.com", 
+                      sender="iglesianuevavidabq@gmail.com", 
                       recipients=[usuario['Email']])
         msg.body = f"Hola {usuario['Nombres']}, nos alegra informarte que tu cita de consejería ha sido confirmada. ¡Te esperamos en la Iglesia Nueva Vida!"
         mail.send(msg)
