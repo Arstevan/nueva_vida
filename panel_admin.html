@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel de Administrador</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-dark bg-dark mb-4">
+        <div class="container">
+            <span class="navbar-brand">Panel de Administrador - Iglesia Nueva Vida</span>
+            <a href="{{ url_for('logout') }}" class="btn btn-danger">Cerrar Sesión</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2>Gestión de Citas de Consejería</h2>
+        
+        <!-- Bloque para mostrar mensajes de éxito/error -->
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-info">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <table class="table table-striped table-hover mt-4 bg-white shadow-sm">
+            <thead class="table-dark">
+                <tr>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                    <th>Miembro</th>
+                    <th>Motivo</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cita in citas %}
+                <tr>
+                    <td>{{ cita.Fecha }}</td>
+                    <td>{{ cita.Hora }}</td>
+                    <td>{{ cita.NombreMiembro }} {{ cita.ApellidoMiembro }}</td>
+                    <td>{{ cita.Especialidad if cita.Especialidad else 'N/A' }}</td>
+                    <td>
+                        <span class="badge 
+                            {% if cita.Estado == 'Pendiente' %}bg-warning text-dark
+                            {% elif cita.Estado == 'Confirmada' %}bg-success
+                            {% elif cita.Estado == 'Cancelada' %}bg-danger
+                            {% else %}bg-secondary{% endif %}">
+                            {{ cita.Estado if cita.Estado else 'Pendiente' }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if cita.Estado != 'Confirmada' and cita.Estado != 'Cancelada' %}
+                            <form action="{{ url_for('cambiar_estado_cita', id_cita=cita.Id_citas, nuevo_estado='Confirmada') }}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn btn-sm btn-success">Confirmar</button>
+                            </form>
+                            <form action="{{ url_for('cambiar_estado_cita', id_cita=cita.Id_citas, nuevo_estado='Cancelada') }}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn btn-sm btn-danger">Cancelar</button>
+                            </form>
+                        {% else %}
+                            <span class="text-muted small">Sin acciones</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
