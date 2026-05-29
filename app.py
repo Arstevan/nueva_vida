@@ -182,8 +182,8 @@ def panel_admin():
 @app.route('/logout')
 def logout():
     session.clear()
-    # Cambiamos 'login' por 'inicio' para que redirija a la página principal
-    return redirect(url_for('consejeria'))
+    # Debe ser 'consejeria' (sin tilde), igual que en tu HTML
+    return redirect(url_for('inicio', _anchor='consejeria'))
 
 
 # ==============================
@@ -194,15 +194,28 @@ def historial_citas():
     if 'usuario_id' not in session or session.get('usuario_rol') != 'admin':
         return redirect(url_for('login'))
     
+    # Capturamos las fechas del formulario
+    fecha_inicio = request.args.get('fecha_inicio')
+    fecha_fin = request.args.get('fecha_fin')
+    
     cursor = mysql.connection.cursor()
-    # Esta consulta trae TODAS las citas, incluyendo las canceladas
+    
+    # Consulta base
     query = """
         SELECT c.*, u.Nombres AS NombreMiembro, u.Apellidos AS ApellidoMiembro 
         FROM citas c
         JOIN usuarios u ON c.Id_miembro = u.Id_miembro
-        ORDER BY c.Fecha DESC
     """
-    cursor.execute(query)
+    params = []
+    
+    # Aplicamos filtro si el usuario ingresó ambas fechas
+    if fecha_inicio and fecha_fin:
+        query += " WHERE c.Fecha BETWEEN %s AND %s"
+        params = [fecha_inicio, fecha_fin]
+    
+    query += " ORDER BY c.Fecha DESC"
+    
+    cursor.execute(query, tuple(params))
     citas = cursor.fetchall()
     cursor.close()
     
