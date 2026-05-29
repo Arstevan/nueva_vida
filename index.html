@@ -1,18 +1,48 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nueva Vida</title>
 
-  <link rel="icon" type="image/png" href="/Imagenes/logo NV negro.png">
+  <title>Iglesia Nueva Vida</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <meta name="description"
+        content="Iglesia Nueva Vida en Barranquilla. Servicios, prédicas, ministerios y consejería espiritual.">
+
+  <meta name="keywords"
+        content="iglesia, barranquilla, nueva vida, cristiana, prédicas">
+
+  <meta name="author"
+        content="Iglesia Nueva Vida">
+
+  <link rel="icon"
+        type="image/png"
+        href="{{ url_for('static', filename='Imagenes/logo NV negro.png') }}">
+
+  <link rel="preconnect"
+        href="https://fonts.googleapis.com">
+
+  <link rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap"
+        rel="stylesheet">
+
+  <link rel="stylesheet"
+        href="{{ url_for('static', filename='styles.css') }}">
+
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+      #consejeria {
+          scroll-margin-top: 50px; 
+      }
+  </style>
+
 </head>
-
-
 
 <body>
 <header class="header">
@@ -47,19 +77,19 @@
   <div class="slider">
 
     <div class="slide active">
-      <img src="/Imagenes/iglesia culto.jpeg">
+      <img src="{{ url_for('static', filename='Imagenes/iglesia culto.jpeg') }}">
     </div>
 
     <div class="slide">
-      <img src="/Imagenes/PORTADA_NV.jpg">
+      <img src="{{ url_for('static', filename='Imagenes/PORTADA_NV.jpg') }} ">
     </div>
 
     <div class="slide">
-      <img src="/Imagenes/jovenes .jpeg">
+      <img src="{{ url_for('static', filename='Imagenes/jovenes .jpeg') }}">
     </div>
 
     <div class="slide">
-      <img src="/Imagenes/DIA DE LAS MADRES NV.png">
+      <img src="{{ url_for('static', filename='Imagenes/DIA DE LAS MADRES NV.png') }}">
     </div> 
 
     <!-- Flechas -->
@@ -73,7 +103,7 @@
   
   <div class="nosotros-container">
     <div class="nosotros-logo">
-      <img src="/Imagenes/logo NV negro.png" alt="Logo Nueva Vida">
+      <img src="{{ url_for('static', filename='Imagenes/logo NV negro.png') }}" alt="Logo Nueva Vida">
     </div>
 
     <div class="nosotros-texto">
@@ -100,25 +130,25 @@ hermanos en la fe, los cuales tomaron la decisión de constituirse bajo el nombr
   <div class="contenedor-servicios">
 
     <div class="servicio">
-      <img src="/Imagenes/AYUNOS.jpg" alt="Servicio Dominical">
+      <img src="{{ url_for('static', filename='Imagenes/AYUNOS.jpg') }}" alt="Servicio Dominical">
       <h3>Oracion y Ayunos</h3>
       <p>Miércoles - 9:30 AM</p>
     </div>
 
     <div class="servicio">
-      <img src="/Imagenes/COMUNION Y PALABRA.jpg" alt="Oración">
+      <img src="{{ url_for('static', filename='Imagenes/COMUNION Y PALABRA.jpg') }}" alt="Oración">
      <h3>Comunion y Palabra</h3>
       <p> Viernes - 7:00 PM</p>
     </div>
 
     <div class="servicio">
-      <img src="/Imagenes/jovenes .jpeg" alt="Estudio Bíblico">
+      <img src="{{ url_for('static', filename='Imagenes/jovenes .jpeg') }}" alt="Estudio Bíblico">
      <h3>Servicio de Jóvenes</h3>
       <p>Sábado - 5:00 PM</p>
     </div>
 
     <div class="servicio">
-      <img src="/Imagenes/iglesia culto.jpeg" alt="Jóvenes">
+      <img src="{{ url_for('static', filename='Imagenes/iglesia culto.jpeg') }}" alt="Jóvenes">
       <h3>Escuela  Dominical</h3>
       <p>Domingo - 10:00 AM</p>
     </div>
@@ -134,7 +164,7 @@ hermanos en la fe, los cuales tomaron la decisión de constituirse bajo el nombr
     
     <div class="ministerio">
       <div class="ministerio-imagen">
-        <img src="/Imagenes/Pastores.png" alt="Pastores">
+        <img src="{{ url_for('static', filename='Imagenes/Pastores.png') }}" alt="Pastores">
       </div>
       <h3>Pastores</h3>
       <p class="pastores-nombres">Pr John Garcia y Shirley Hernandez</p>
@@ -143,7 +173,7 @@ hermanos en la fe, los cuales tomaron la decisión de constituirse bajo el nombr
 
     <div class="ministerio">
       <div class="ministerio-imagen">
-        <img src="/Imagenes/muejeres_consagradas.jpeg" alt="Consagradas">
+        <img src="{{ url_for('static', filename='Imagenes/muejeres_consagradas.jpeg') }}" alt="Consagradas">
       </div>
       <h3>Consagradas</h3>
       <p class="pastores-nombres">Ministerio de Mujeres</p>
@@ -152,7 +182,7 @@ hermanos en la fe, los cuales tomaron la decisión de constituirse bajo el nombr
 
     <div class="ministerio">
       <div class="ministerio-imagen">
-        <img src="/Imagenes/fabi pas_n.jpg" alt="Escogidos">
+        <img src="{{ url_for('static', filename='Imagenes/fabi pas_n.jpg') }}" alt="Escogidos">
       </div>
       <h3>Escogidos</h3>
       <p class="pastores-nombres">Pr de Jóvenes Fabian De La Hoz</p>
@@ -161,7 +191,7 @@ hermanos en la fe, los cuales tomaron la decisión de constituirse bajo el nombr
 
     <div class="ministerio">
       <div class="ministerio-imagen">
-        <img src="/Imagenes/pas_oscar_erica.jpeg" alt="Conexión">
+        <img src="{{ url_for('static', filename='Imagenes/pas_oscar_erica.jpeg') }}" alt="Conexión">
       </div>
       <h3>Conexión</h3>
       <p class="pastores-nombres">Pr Oscar Maldonado y Erika Barbosa</p>
@@ -171,7 +201,7 @@ hermanos en la fe, los cuales tomaron la decisión de constituirse bajo el nombr
 
     <div class="ministerio">
       <div class="ministerio-imagen">
-        <img src="/Imagenes/staff.jpeg" alt="Staff">
+        <img src="{{ url_for('static', filename='Imagenes/staff.jpeg') }}" alt="Staff">
       </div>
       <h3>Staff</h3>
       <p class="resena">El corazón del servicio. Hombres y mujeres comprometidos
@@ -180,7 +210,7 @@ hermanos en la fe, los cuales tomaron la decisión de constituirse bajo el nombr
 
     <div class="ministerio">
       <div class="ministerio-imagen">
-        <img src="/Imagenes/nueva vida kids.png" alt="Kids">
+        <img src="{{ url_for('static', filename='Imagenes/nueva vida kids.png') }}" alt="Kids">
       </div>
       <h3>Nueva Vida Kids</h3>
       <p class="pastores-nombres">Lider. Yajaira De La Hoz</p>
@@ -190,7 +220,7 @@ hermanos en la fe, los cuales tomaron la decisión de constituirse bajo el nombr
 
     <div class="ministerio">
       <div class="ministerio-imagen">
-        <img src="/Imagenes/medios.jpeg" alt="Medios">
+        <img src="{{ url_for('static', filename='Imagenes/medios.jpeg') }}" alt="Medios">
       </div>
       <h3>Medios</h3>
       <p class="resena">Innovación al servicio del Evangelio. Manejamos la tecnología,
@@ -200,7 +230,7 @@ hermanos en la fe, los cuales tomaron la decisión de constituirse bajo el nombr
     
     <div class="ministerio">
       <div class="ministerio-imagen">
-        <img src="/Imagenes/danza.png" alt="Gupo de Danza">
+        <img src="{{ url_for('static', filename='Imagenes/danza.png') }}" alt="Gupo de Danza">
       </div>
       <h3> Danza</h3>
       <p class="resena">La danza es un ministerio de adoración que 
@@ -231,37 +261,45 @@ hermanos en la fe, los cuales tomaron la decisión de constituirse bajo el nombr
 </section>
 
 <section id="consejeria" class="consejeria">
+
   <div class="consejeria-header">
     <h2>Consejería Espiritual</h2>
-    <p>Un espacio de apoyo y guía basado en la fe. Identifícate para continuar.</p>
+    <p>
+      Un espacio de apoyo, orientación y restauración basado en la fe.
+      Ingresa con tu cuenta para acceder al sistema.
+    </p>
   </div>
 
   <div class="consejeria-container">
-    <div class="card-acceso">
-      <div class="card-icon">
+
+    <div class="card-login">
+
+      <div class="login-icon">
         <i class="fas fa-hands-praying"></i>
       </div>
-      <h3>Miembros</h3>
-      <p>Agenda, consulta o cancela tus citas personales de consejería.</p>
+
+      <h3>Acceso al Sistema</h3>
+
+      <p>
+        Miembros y consejeros pueden ingresar desde aquí para
+        gestionar sus citas y acceder a sus funciones.
+      </p>
+
       <div class="card-buttons">
-        <a href="login.php" class="btn-acceso principal">Iniciar Sesión</a>
-        <a href="registro.php" class="btn-acceso secundario">Crear Cuenta</a>
+        <a href="{{ url_for('login') }}" class="btn-login">
+          Iniciar Sesión
+        </a>
+
+        <a href="{{ url_for('registro') }}" class="btn-registro">
+          Crear Cuenta
+        </a>
       </div>
+
     </div>
 
-    <div class="card-acceso admin">
-      <div class="card-icon">
-        <i class="fas fa-user-tie"></i>
-      </div>
-      <h3>Consejeros</h3>
-      <p>Panel administrativo para gestionar la agenda global de la iglesia.</p>
-      <div class="card-buttons">
-        <a href="login-admin.php" class="btn-acceso admin-btn">Acceso Administradores</a>
-      </div>
-    </div>
   </div>
-</section>
 
+</section>
 
 <section id="donaciones" class="donaciones">
   <h2 class="section-title">Donaciones</h2>
@@ -269,7 +307,7 @@ hermanos en la fe, los cuales tomaron la decisión de constituirse bajo el nombr
 
   <div class="donaciones-split-container">
     <div class="donacion-qr">
-      <img src="/Imagenes/QR.jpeg" alt="QR para donaciones" class="qr-img">
+      <img src="{{ url_for('static', filename='Imagenes/QR.jpeg') }}" alt="QR para donaciones" class="qr-img">
       <span>Escanea para donar</span>
     </div>
 
@@ -277,7 +315,7 @@ hermanos en la fe, los cuales tomaron la decisión de constituirse bajo el nombr
       <div class="info-item">
         <h3>Cuenta de Ahorros</h3>
         <p>Bancolombia</p>
-        <p class="numero-cuenta">080-000041-96
+        <p class="numero-cuenta">080-000041-96</p>
       </div>
 
       <div class="info-item">
@@ -343,51 +381,52 @@ hermanos en la fe, los cuales tomaron la decisión de constituirse bajo el nombr
   </div>
 </footer>
 
-
+<!-- ================= JAVASCRIPT ================= -->
 
 <script>
+
+  // ================= MENU RESPONSIVE =================
+
   const toggle = document.getElementById("menu-toggle");
   const menu = document.getElementById("menu");
 
-  // abrir / cerrar con botón
   toggle.addEventListener("click", () => {
     menu.classList.toggle("active");
   });
 
-  // 🔥 cerrar menú al hacer click en cualquier link
-  document.getElementById("menu").addEventListener("click", (e) => {
-    if (e.target.tagName === "A") {
-      menu.classList.remove("active");
-    }
-  });
+  // ================= SLIDER =================
+
+  const slides = document.querySelectorAll(".slide");
+  const nextBtn = document.querySelector(".next");
+  const prevBtn = document.querySelector(".prev");
+
+  let index = 0;
+
+  function showSlide(i) {
+
+    slides.forEach(slide => {
+      slide.classList.remove("active");
+    });
+
+    slides[i].classList.add("active");
+  }
+
+  function nextSlide() {
+    index = (index + 1) % slides.length;
+    showSlide(index);
+  }
+
+  function prevSlide() {
+    index = (index - 1 + slides.length) % slides.length;
+    showSlide(index);
+  }
+
+  nextBtn.addEventListener("click", nextSlide);
+  prevBtn.addEventListener("click", prevSlide);
+
+  setInterval(nextSlide, 5000);
 
 </script>
 
-
-<script>
-let slides = document.querySelectorAll('.slide');
-let index = 0;
-
-function showSlide(i) {
-  slides.forEach(slide => slide.classList.remove('active'));
-  slides[i].classList.add('active');
-}
-
-document.querySelector('.next').onclick = () => {
-  index = (index + 1) % slides.length;
-  showSlide(index);
-};
-
-document.querySelector('.prev').onclick = () => {
-  index = (index - 1 + slides.length) % slides.length;
-  showSlide(index);
-};
-
-// automático
-setInterval(() => {
-  index = (index + 1) % slides.length;
-  showSlide(index);
-}, 5000);
-</script>
 </body>
 </html>
