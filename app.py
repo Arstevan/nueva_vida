@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_mysqldb import MySQL
 from flask_mail import Mail, Message
+from itsdangerous import URLSafeTimedSerializer as Serializer
+
 
 app = Flask(__name__)
 app.secret_key = 'nueva_vida_secret'
@@ -53,37 +55,104 @@ def registro():
     return render_template('registro.html')
 
 # ==============================
-# RUTA LOGIN
+# RUTA LOGIN 
 # ==============================
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        email = request.form['email']
-        contrasena = request.form['contrasena']
+        email = request.form['email'].strip()
+        contrasena = request.form['contrasena'].strip()
+        
         cursor = mysql.connection.cursor()
-        cursor.execute("SELECT * FROM usuarios WHERE Email=%s AND Contrasena=%s", (email, contrasena))
+        # Buscamos solo por email primero para verificar si existe
+        cursor.execute("SELECT * FROM usuarios WHERE Email=%s", (email,))
+        usuario = cursor.fetchone()
+        cursor.close()
+        
+        if usuario:
+            # Comparamos contraseñas quitando espacios en ambos lados
+            # Asegúrate de usar la llave 'Contrasena' (con C mayúscula) como en tu tabla
+            if str(usuario['Contrasena']).strip() == contrasena:
+                session.clear() # Limpiamos sesión antigua
+                session['usuario_id'] = usuario['Id_miembro']
+                session['usuario_nombre'] = usuario['Nombres']
+                session['usuario_rol'] = usuario['rol']
+                
+                # Redirección basada en el rol
+                if usuario['rol'] == 'admin':
+                    return redirect(url_for('panel_admin'))
+                else:
+                    return redirect(url_for('panel_usuario'))
+            else:
+                flash("Contraseña incorrecta.", "error")
+        else:
+            flash("Correo no registrado.", "error")
+            
+    return render_template('login.html')
+
+
+# ==============================
+# LÓGICA DE RECUPERACIÓN DE CONTRASEÑA
+# ==============================
+def get_reset_token(email):
+    s = Serializer(app.secret_key, salt='recuperar-pass')
+    return s.dumps(email)
+
+def verify_reset_token(token):
+    s = Serializer(app.secret_key, salt='recuperar-pass')
+    try:
+        email = s.loads(token, max_age=1800) # Expira en 30 minutos
+        return email
+    except:
+        return None
+
+@app.route('/olvidar-password', methods=['GET', 'POST'])
+def olvidar_password():
+    if request.method == 'POST':
+        email = request.form['email']
+        cursor = mysql.connection.cursor()
+        cursor.execute("SELECT * FROM usuarios WHERE Email = %s", (email,))
         usuario = cursor.fetchone()
         
         if usuario:
-            session['usuario_id'] = usuario['Id_miembro'] 
-            session['usuario_nombre'] = usuario['Nombres']
-            session['usuario_rol'] = usuario['rol'] 
-            
-            if usuario['rol'] == 'admin':
-                return redirect(url_for('panel_admin'))
-            else:
-                return redirect(url_for('panel_usuario'))
+            token = get_reset_token(email)
+            link = url_for('reset_password', token=token, _external=True)
+            msg = Message("Recuperación de Contraseña - Nueva Vida",
+                          sender="iglesianuevavidabq@gmail.com",
+                          recipients=[email])
+            msg.body = f"Hola, has solicitado recuperar tu acceso. Haz clic aquí para cambiar tu contraseña: {link}"
+            mail.send(msg)
+            flash("Se ha enviado un enlace de recuperación a tu correo.", "success")
         else:
-            flash("Correo o contraseña incorrectos", "error")
-    return render_template('login.html')
+            flash("Correo no encontrado en el sistema.", "error")
+    return render_template('olvidar_password.html')
+
+@app.route('/reset-password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    email = verify_reset_token(token)
+    if not email:
+        flash('El enlace es inválido o ha expirado.', 'error')
+        return redirect(url_for('login'))
+    
+    if request.method == 'POST':
+        nueva_pass = request.form['contrasena'] # Guardamos tal cual
+        cursor = mysql.connection.cursor()
+        cursor.execute("UPDATE usuarios SET Contrasena = %s WHERE Email = %s", (nueva_pass, email))
+        mysql.connection.commit()
+        cursor.close()
+        
+        flash("Contraseña actualizada exitosamente.", "success")
+        return redirect(url_for('login'))
+        
+    return render_template('reset_password.html')
 
 # ==============================
 # RUTA PANEL USUARIO
 # ==============================
 @app.route('/panel-usuario', methods=['GET', 'POST'])
 def panel_usuario():
-    if 'usuario_id' not in session:
-        return redirect(url_for('login'))
+    # ... tu código aquí ...
+    if 'usuario_id' not in session: return redirect(url_for('login'))
     
     if request.method == 'POST':
         motivo = request.form['motivo']
@@ -91,18 +160,74 @@ def panel_usuario():
         hora = request.form['hora']
         
         cursor = mysql.connection.cursor()
-        cursor.execute("INSERT INTO citas (Especialidad, Fecha, Hora, Id_miembro, Estado) VALUES (%s, %s, %s, %s, %s)", 
-                       (motivo, fecha, hora, session['usuario_id'], 'Pendiente'))
-        mysql.connection.commit()
-        flash('Solicitud enviada con éxito', 'success')
+        
+        # A) Verificar si el día está bloqueado por el administrador
+        cursor.execute("SELECT * FROM dias_bloqueados WHERE fecha_bloqueada = %s", (fecha,))
+        bloqueado = cursor.fetchone()
+        
+        # B) Verificar si ya hay una cita en ese horario
+        cursor.execute("SELECT COUNT(*) as total FROM citas WHERE Fecha = %s AND Hora = %s AND Estado != 'Cancelada'", 
+                       (fecha, hora))
+        cita_existente = cursor.fetchone()
+        
+        if bloqueado:
+            flash(f"Lo sentimos, el día {fecha} no está disponible para consejería.", "error")
+        elif cita_existente['total'] > 0:
+            flash("Este horario ya está reservado. Por favor elige otro.", "error")
+        else:
+            # 3. GUARDAR CITA
+            cursor.execute("INSERT INTO citas (Especialidad, Fecha, Hora, Id_miembro, Estado) VALUES (%s, %s, %s, %s, %s)", 
+                           (motivo, fecha, hora, session['usuario_id'], 'Pendiente'))
+            mysql.connection.commit()
+            flash('Solicitud enviada con éxito.', 'success')
+            
+        cursor.close()
         return redirect(url_for('panel_usuario'))
 
+    # Para mostrar las citas del usuario
     cursor = mysql.connection.cursor()
     cursor.execute("SELECT * FROM citas WHERE Id_miembro = %s ORDER BY Fecha DESC", (session['usuario_id'],))
     citas = cursor.fetchall()
     cursor.close()
-    
     return render_template('panel_usuario.html', citas=citas)
+
+# ==============================
+# RUTA PARA BLOQUEAR DÍAS (Faltaba esta)
+# ==============================
+@app.route('/bloquear-dia', methods=['POST'])
+def bloquear_dia():
+    if 'usuario_id' not in session or session.get('usuario_rol') != 'admin':
+        return redirect(url_for('login'))
+    
+    fecha = request.form['fecha_bloqueo']
+    cursor = mysql.connection.cursor()
+    cursor.execute("INSERT INTO dias_bloqueados (fecha_bloqueada) VALUES (%s)", (fecha,))
+    mysql.connection.commit()
+    cursor.close()
+    
+    flash(f"Día {fecha} bloqueado exitosamente.", "success")
+    return redirect(url_for('panel_admin'))
+
+
+
+
+# ==============================
+# RUTA DESBLOQUEAR DIA
+# ==============================
+@app.route('/desbloquear-dia/<string:fecha>', methods=['POST'])
+def desbloquear_dia(fecha):
+    if 'usuario_id' not in session or session.get('usuario_rol') != 'admin':
+        return redirect(url_for('login'))
+    
+    cursor = mysql.connection.cursor()
+    cursor.execute("DELETE FROM dias_bloqueados WHERE fecha_bloqueada = %s", (fecha,))
+    mysql.connection.commit()
+    cursor.close()
+    
+    flash(f"Día {fecha} desbloqueado exitosamente.", "success")
+    return redirect(url_for('panel_admin'))
+
+
 
 # ==============================
 # RUTA CAMBIAR ESTADO CITA
@@ -163,6 +288,8 @@ def panel_admin():
         return redirect(url_for('login'))
     
     cursor = mysql.connection.cursor()
+    
+    # Obtener citas
     query = """
         SELECT c.*, u.Nombres AS NombreMiembro, u.Apellidos AS ApellidoMiembro 
         FROM citas c
@@ -172,9 +299,16 @@ def panel_admin():
     """
     cursor.execute(query)
     citas = cursor.fetchall()
+    
+    # Obtener fechas bloqueadas (NUEVO)
+    cursor.execute("SELECT fecha_bloqueada FROM dias_bloqueados ORDER BY fecha_bloqueada ASC")
+    dias_bloqueados = cursor.fetchall()
+    
     cursor.close()
     
-    return render_template('panel_admin.html', citas=citas)
+    return render_template('panel_admin.html', citas=citas, dias_bloqueados=dias_bloqueados)
+
+
 
 # ==============================
 # RUTA LOGOUT
