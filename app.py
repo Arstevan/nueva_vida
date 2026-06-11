@@ -240,6 +240,7 @@ def cambiar_estado_cita(id_cita, nuevo_estado):
 
     cursor = mysql.connection.cursor()
     
+    # 1. Obtenemos los datos completos (Email, Nombres, Fecha y Hora)
     cursor.execute("""
         SELECT u.Email, u.Nombres, c.Fecha, c.Hora 
         FROM usuarios u 
@@ -248,33 +249,44 @@ def cambiar_estado_cita(id_cita, nuevo_estado):
     """, (id_cita,))
     usuario = cursor.fetchone()
     
+    # 2. Actualizamos el estado
     cursor.execute("UPDATE citas SET Estado = %s WHERE Id_citas = %s", (nuevo_estado, id_cita))
     mysql.connection.commit()
     
-    if nuevo_estado == 'Confirmada' and usuario:
-        msg = Message("Cita Confirmada - Iglesia Nueva Vida",
-                      sender="iglesianuevavidabq@gmail.com",
-                      recipients=[usuario['Email']])
-        
-        msg.body = (f"¡Hola, {usuario['Nombres']}!\n\n"
-                    f"Reciba un cordial saludo de parte de la Iglesia Nueva Vida.\n\n"
-                    f"Nos complace informarle que su solicitud de cita de consejería ha sido aprobada y confirmada exitosamente.\n\n"
-                    f"Detalles de su cita:\n"
-                    f"📅 Fecha: {usuario['Fecha']}\n"
-                    f"⏰ Hora: {usuario['Hora']}\n\n"
-                    f"Le recordamos asistir puntualmente. Si por algún motivo no puede asistir, le agradecemos notificarnos con antelación a través de nuestra plataforma o contactando a la iglesia.\n\n"
-                    f"¡Estamos atentos para servirle y compartir juntos en este tiempo de bendición!\n\n"
-                    f"Atentamente,\n"
-                    f"Equipo de Consejería - Iglesia Nueva Vida")
-        
+    if usuario:
         try:
+            if nuevo_estado == 'Confirmada':
+                asunto = "Cita Confirmada - Iglesia Nueva Vida"
+                msg_cuerpo = (f"¡Hola, {usuario['Nombres']}!\n\n"
+                            f"Reciba un cordial saludo de parte de la Iglesia Nueva Vida.\n\n"
+                            f"Nos complace informarle que su solicitud de cita de consejería ha sido aprobada y confirmada exitosamente.\n\n"
+                            f"Detalles de su cita:\n"
+                            f"📅 Fecha: {usuario['Fecha']}\n"
+                            f"⏰ Hora: {usuario['Hora']}\n\n"
+                            f"Le recordamos asistir puntualmente. Si por algún motivo no puede asistir, le agradecemos notificarnos con antelación a través de nuestra plataforma o contactando a la iglesia.\n\n"
+                            f"¡Estamos atentos para servirle y compartir juntos en este tiempo de bendición!\n\n"
+                            f"Atentamente,\n"
+                            f"Equipo de Consejería - Iglesia Nueva Vida")
+            else:
+                asunto = "Cita Cancelada - Iglesia Nueva Vida"
+                msg_cuerpo = (f"¡Hola, {usuario['Nombres']}!\n\n"
+                            f"Reciba un cordial saludo de parte de la Iglesia Nueva Vida.\n\n"
+                            f"Lamentamos informarle que su cita de consejería ha sido cancelada.\n\n"
+                            f"Detalles de la cita cancelada:\n"
+                            f"📅 Fecha: {usuario['Fecha']}\n"
+                            f"⏰ Hora: {usuario['Hora']}\n\n"
+                            f"Si desea reprogramar o tiene alguna duda, por favor contáctenos a través de nuestra plataforma.\n\n"
+                            f"Atentamente,\n"
+                            f"Equipo de Consejería - Iglesia Nueva Vida")
+
+            msg = Message(asunto, sender="iglesianuevavidabq@gmail.com", recipients=[usuario['Email']])
+            msg.body = msg_cuerpo
             mail.send(msg)
-            flash(f"Cita confirmada y correo enviado a {usuario['Nombres']}", "success")
+            flash(f"Cita {nuevo_estado} y correo enviado correctamente.", "success")
+            
         except Exception as e:
-            flash("Cita confirmada, pero hubo un problema al enviar el correo.", "warning")
+            flash(f"Cita {nuevo_estado}, pero falló el envío del correo.", "warning")
             print(f"Error: {e}")
-    else:
-        flash(f"Cita actualizada a {nuevo_estado}", "success")
     
     cursor.close()
     return redirect(url_for('panel_admin'))
