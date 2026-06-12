@@ -367,5 +367,46 @@ def historial_citas():
     
     return render_template('historial.html', citas=citas)
 
+
+
+
+  # ==============================
+# RUTA CONTACTO (Nueva funcionalidad)
+# ==============================
+@app.route('/contacto', methods=['POST'])
+def contacto():
+    # Captura los datos del formulario de tu imagen
+    nombre = request.form.get('nombre')
+    telefono = request.form.get('telefono')
+    mensaje_usuario = request.form.get('mensaje')
+
+    # Crear el mensaje
+    msg = Message(f"Nuevo mensaje de contacto de: {nombre}",
+                  sender='iglesianuevavidabq@gmail.com', # Tu correo remitente
+                  recipients=['iglesianuevavidabq@gmail.com']) # El correo de la iglesia
+
+    # Cuerpo del correo
+    msg.body = f"""
+    Has recibido un nuevo mensaje desde el sistema:
+    
+    Nombre: {nombre}
+    Teléfono: {telefono}
+    Mensaje: {mensaje_usuario}
+    """
+
+    try:
+        mail.send(msg)
+        flash('¡Mensaje enviado correctamente a la iglesia!', 'success')
+    except Exception as e:
+        print(f"Error al enviar correo: {e}")
+        flash('Hubo un error al enviar tu mensaje. Inténtalo más tarde.', 'error')
+
+    # Redirige de vuelta al inicio (o donde tengas la sección de contacto)
+    return redirect(url_for('inicio', _anchor='contacto'))
+
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=False)
+
+
+
+  
